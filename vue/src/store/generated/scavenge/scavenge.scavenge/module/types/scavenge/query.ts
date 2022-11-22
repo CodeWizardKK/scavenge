@@ -1,6 +1,11 @@
 /* eslint-disable */
 import { Reader, Writer } from "protobufjs/minimal";
 import { Params } from "../scavenge/params";
+import { Scavenge } from "../scavenge/scavenge";
+import {
+  PageRequest,
+  PageResponse,
+} from "../cosmos/base/query/v1beta1/pagination";
 
 export const protobufPackage = "scavenge.scavenge";
 
@@ -11,6 +16,23 @@ export interface QueryParamsRequest {}
 export interface QueryParamsResponse {
   /** params holds all the parameters of this module. */
   params: Params | undefined;
+}
+
+export interface QueryGetScavengeRequest {
+  index: string;
+}
+
+export interface QueryGetScavengeResponse {
+  scavenge: Scavenge | undefined;
+}
+
+export interface QueryAllScavengeRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllScavengeResponse {
+  scavenge: Scavenge[];
+  pagination: PageResponse | undefined;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -110,10 +132,324 @@ export const QueryParamsResponse = {
   },
 };
 
+const baseQueryGetScavengeRequest: object = { index: "" };
+
+export const QueryGetScavengeRequest = {
+  encode(
+    message: QueryGetScavengeRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.index !== "") {
+      writer.uint32(10).string(message.index);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetScavengeRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetScavengeRequest,
+    } as QueryGetScavengeRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.index = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetScavengeRequest {
+    const message = {
+      ...baseQueryGetScavengeRequest,
+    } as QueryGetScavengeRequest;
+    if (object.index !== undefined && object.index !== null) {
+      message.index = String(object.index);
+    } else {
+      message.index = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetScavengeRequest): unknown {
+    const obj: any = {};
+    message.index !== undefined && (obj.index = message.index);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetScavengeRequest>
+  ): QueryGetScavengeRequest {
+    const message = {
+      ...baseQueryGetScavengeRequest,
+    } as QueryGetScavengeRequest;
+    if (object.index !== undefined && object.index !== null) {
+      message.index = object.index;
+    } else {
+      message.index = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryGetScavengeResponse: object = {};
+
+export const QueryGetScavengeResponse = {
+  encode(
+    message: QueryGetScavengeResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.scavenge !== undefined) {
+      Scavenge.encode(message.scavenge, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetScavengeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetScavengeResponse,
+    } as QueryGetScavengeResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.scavenge = Scavenge.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetScavengeResponse {
+    const message = {
+      ...baseQueryGetScavengeResponse,
+    } as QueryGetScavengeResponse;
+    if (object.scavenge !== undefined && object.scavenge !== null) {
+      message.scavenge = Scavenge.fromJSON(object.scavenge);
+    } else {
+      message.scavenge = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetScavengeResponse): unknown {
+    const obj: any = {};
+    message.scavenge !== undefined &&
+      (obj.scavenge = message.scavenge
+        ? Scavenge.toJSON(message.scavenge)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetScavengeResponse>
+  ): QueryGetScavengeResponse {
+    const message = {
+      ...baseQueryGetScavengeResponse,
+    } as QueryGetScavengeResponse;
+    if (object.scavenge !== undefined && object.scavenge !== null) {
+      message.scavenge = Scavenge.fromPartial(object.scavenge);
+    } else {
+      message.scavenge = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllScavengeRequest: object = {};
+
+export const QueryAllScavengeRequest = {
+  encode(
+    message: QueryAllScavengeRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllScavengeRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryAllScavengeRequest,
+    } as QueryAllScavengeRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllScavengeRequest {
+    const message = {
+      ...baseQueryAllScavengeRequest,
+    } as QueryAllScavengeRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllScavengeRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllScavengeRequest>
+  ): QueryAllScavengeRequest {
+    const message = {
+      ...baseQueryAllScavengeRequest,
+    } as QueryAllScavengeRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllScavengeResponse: object = {};
+
+export const QueryAllScavengeResponse = {
+  encode(
+    message: QueryAllScavengeResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.scavenge) {
+      Scavenge.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryAllScavengeResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryAllScavengeResponse,
+    } as QueryAllScavengeResponse;
+    message.scavenge = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.scavenge.push(Scavenge.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllScavengeResponse {
+    const message = {
+      ...baseQueryAllScavengeResponse,
+    } as QueryAllScavengeResponse;
+    message.scavenge = [];
+    if (object.scavenge !== undefined && object.scavenge !== null) {
+      for (const e of object.scavenge) {
+        message.scavenge.push(Scavenge.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllScavengeResponse): unknown {
+    const obj: any = {};
+    if (message.scavenge) {
+      obj.scavenge = message.scavenge.map((e) =>
+        e ? Scavenge.toJSON(e) : undefined
+      );
+    } else {
+      obj.scavenge = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllScavengeResponse>
+  ): QueryAllScavengeResponse {
+    const message = {
+      ...baseQueryAllScavengeResponse,
+    } as QueryAllScavengeResponse;
+    message.scavenge = [];
+    if (object.scavenge !== undefined && object.scavenge !== null) {
+      for (const e of object.scavenge) {
+        message.scavenge.push(Scavenge.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
+  /** Queries a Scavenge by index. */
+  Scavenge(request: QueryGetScavengeRequest): Promise<QueryGetScavengeResponse>;
+  /** Queries a list of Scavenge items. */
+  ScavengeAll(
+    request: QueryAllScavengeRequest
+  ): Promise<QueryAllScavengeResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -125,6 +461,34 @@ export class QueryClientImpl implements Query {
     const data = QueryParamsRequest.encode(request).finish();
     const promise = this.rpc.request("scavenge.scavenge.Query", "Params", data);
     return promise.then((data) => QueryParamsResponse.decode(new Reader(data)));
+  }
+
+  Scavenge(
+    request: QueryGetScavengeRequest
+  ): Promise<QueryGetScavengeResponse> {
+    const data = QueryGetScavengeRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "scavenge.scavenge.Query",
+      "Scavenge",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetScavengeResponse.decode(new Reader(data))
+    );
+  }
+
+  ScavengeAll(
+    request: QueryAllScavengeRequest
+  ): Promise<QueryAllScavengeResponse> {
+    const data = QueryAllScavengeRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "scavenge.scavenge.Query",
+      "ScavengeAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryAllScavengeResponse.decode(new Reader(data))
+    );
   }
 }
 
