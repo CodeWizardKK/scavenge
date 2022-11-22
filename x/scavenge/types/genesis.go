@@ -11,6 +11,7 @@ const DefaultIndex uint64 = 1
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
 		ScavengeList: []Scavenge{},
+		CommitList:   []Commit{},
 		// this line is used by starport scaffolding # genesis/types/default
 		Params: DefaultParams(),
 	}
@@ -28,6 +29,16 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicated index for scavenge")
 		}
 		scavengeIndexMap[index] = struct{}{}
+	}
+	// Check for duplicated index in commit
+	commitIndexMap := make(map[string]struct{})
+
+	for _, elem := range gs.CommitList {
+		index := string(CommitKey(elem.Index))
+		if _, ok := commitIndexMap[index]; ok {
+			return fmt.Errorf("duplicated index for commit")
+		}
+		commitIndexMap[index] = struct{}{}
 	}
 	// this line is used by starport scaffolding # genesis/types/validate
 

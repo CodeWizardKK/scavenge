@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { Params } from "../scavenge/params";
 import { Scavenge } from "../scavenge/scavenge";
+import { Commit } from "../scavenge/commit";
 import { Writer, Reader } from "protobufjs/minimal";
 
 export const protobufPackage = "scavenge.scavenge";
@@ -8,8 +9,9 @@ export const protobufPackage = "scavenge.scavenge";
 /** GenesisState defines the scavenge module's genesis state. */
 export interface GenesisState {
   params: Params | undefined;
-  /** this line is used by starport scaffolding # genesis/proto/state */
   scavengeList: Scavenge[];
+  /** this line is used by starport scaffolding # genesis/proto/state */
+  commitList: Commit[];
 }
 
 const baseGenesisState: object = {};
@@ -22,6 +24,9 @@ export const GenesisState = {
     for (const v of message.scavengeList) {
       Scavenge.encode(v!, writer.uint32(18).fork()).ldelim();
     }
+    for (const v of message.commitList) {
+      Commit.encode(v!, writer.uint32(26).fork()).ldelim();
+    }
     return writer;
   },
 
@@ -30,6 +35,7 @@ export const GenesisState = {
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseGenesisState } as GenesisState;
     message.scavengeList = [];
+    message.commitList = [];
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -38,6 +44,9 @@ export const GenesisState = {
           break;
         case 2:
           message.scavengeList.push(Scavenge.decode(reader, reader.uint32()));
+          break;
+        case 3:
+          message.commitList.push(Commit.decode(reader, reader.uint32()));
           break;
         default:
           reader.skipType(tag & 7);
@@ -50,6 +59,7 @@ export const GenesisState = {
   fromJSON(object: any): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
     message.scavengeList = [];
+    message.commitList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromJSON(object.params);
     } else {
@@ -58,6 +68,11 @@ export const GenesisState = {
     if (object.scavengeList !== undefined && object.scavengeList !== null) {
       for (const e of object.scavengeList) {
         message.scavengeList.push(Scavenge.fromJSON(e));
+      }
+    }
+    if (object.commitList !== undefined && object.commitList !== null) {
+      for (const e of object.commitList) {
+        message.commitList.push(Commit.fromJSON(e));
       }
     }
     return message;
@@ -74,12 +89,20 @@ export const GenesisState = {
     } else {
       obj.scavengeList = [];
     }
+    if (message.commitList) {
+      obj.commitList = message.commitList.map((e) =>
+        e ? Commit.toJSON(e) : undefined
+      );
+    } else {
+      obj.commitList = [];
+    }
     return obj;
   },
 
   fromPartial(object: DeepPartial<GenesisState>): GenesisState {
     const message = { ...baseGenesisState } as GenesisState;
     message.scavengeList = [];
+    message.commitList = [];
     if (object.params !== undefined && object.params !== null) {
       message.params = Params.fromPartial(object.params);
     } else {
@@ -88,6 +111,11 @@ export const GenesisState = {
     if (object.scavengeList !== undefined && object.scavengeList !== null) {
       for (const e of object.scavengeList) {
         message.scavengeList.push(Scavenge.fromPartial(e));
+      }
+    }
+    if (object.commitList !== undefined && object.commitList !== null) {
+      for (const e of object.commitList) {
+        message.commitList.push(Commit.fromPartial(e));
       }
     }
     return message;

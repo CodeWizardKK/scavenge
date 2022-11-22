@@ -22,6 +22,14 @@ func TestGenesis(t *testing.T) {
 				Index: "1",
 			},
 		},
+		CommitList: []types.Commit{
+			{
+				Index: "0",
+			},
+			{
+				Index: "1",
+			},
+		},
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -34,5 +42,6 @@ func TestGenesis(t *testing.T) {
 	nullify.Fill(got)
 
 	require.ElementsMatch(t, genesisState.ScavengeList, got.ScavengeList)
+	require.ElementsMatch(t, genesisState.CommitList, got.CommitList)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

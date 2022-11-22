@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "scavenge/params.proto";
 import "scavenge/scavenge.proto";
+import "scavenge/commit.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "scavenge/x/scavenge/types";
@@ -24,6 +25,16 @@ service Query {
 	// Queries a list of Scavenge items.
 	rpc ScavengeAll(QueryAllScavengeRequest) returns (QueryAllScavengeResponse) {
 		option (google.api.http).get = "/scavenge/scavenge/scavenge";
+	}
+
+// Queries a Commit by index.
+	rpc Commit(QueryGetCommitRequest) returns (QueryGetCommitResponse) {
+		option (google.api.http).get = "/scavenge/scavenge/commit/{index}";
+	}
+
+	// Queries a list of Commit items.
+	rpc CommitAll(QueryAllCommitRequest) returns (QueryAllCommitResponse) {
+		option (google.api.http).get = "/scavenge/scavenge/commit";
 	}
 
 // this line is used by starport scaffolding # 2
@@ -53,6 +64,24 @@ message QueryAllScavengeRequest {
 
 message QueryAllScavengeResponse {
 	repeated Scavenge scavenge = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetCommitRequest {
+	  string index = 1;
+
+}
+
+message QueryGetCommitResponse {
+	Commit commit = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllCommitRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllCommitResponse {
+	repeated Commit commit = 1 [(gogoproto.nullable) = false];
 	cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

@@ -1,10 +1,11 @@
 import { txClient, queryClient, MissingWalletError , registry} from './module'
 
+import { Commit } from "./module/types/scavenge/commit"
 import { Params } from "./module/types/scavenge/params"
 import { Scavenge } from "./module/types/scavenge/scavenge"
 
 
-export { Params, Scavenge };
+export { Commit, Params, Scavenge };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -45,8 +46,11 @@ const getDefaultState = () => {
 				Params: {},
 				Scavenge: {},
 				ScavengeAll: {},
+				Commit: {},
+				CommitAll: {},
 				
 				_Structure: {
+						Commit: getStructure(Commit.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						Scavenge: getStructure(Scavenge.fromPartial({})),
 						
@@ -94,6 +98,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.ScavengeAll[JSON.stringify(params)] ?? {}
+		},
+				getCommit: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.Commit[JSON.stringify(params)] ?? {}
+		},
+				getCommitAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.CommitAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -199,21 +215,54 @@ export default {
 		},
 		
 		
-		async sendMsgRevealSolution({ rootGetters }, { value, fee = [], memo = '' }) {
+		
+		
+		 		
+		
+		
+		async QueryCommit({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRevealSolution(value)
-				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
-	gas: "200000" }, memo})
-				return result
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryCommit( key.index)).data
+				
+					
+				commit('QUERY', { query: 'Commit', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryCommit', payload: { options: { all }, params: {...key},query }})
+				return getters['getCommit']( { params: {...key}, query}) ?? {}
 			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRevealSolution:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgRevealSolution:Send Could not broadcast Tx: '+ e.message)
-				}
+				throw new Error('QueryClient:QueryCommit API Node Unavailable. Could not perform query: ' + e.message)
+				
 			}
 		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryCommitAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryCommitAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryCommitAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'CommitAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryCommitAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getCommitAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryCommitAll API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
 		async sendMsgSubmitScavenge({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -226,6 +275,21 @@ export default {
 					throw new Error('TxClient:MsgSubmitScavenge:Init Could not initialize signing client. Wallet is required.')
 				}else{
 					throw new Error('TxClient:MsgSubmitScavenge:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
+		async sendMsgRevealSolution({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgRevealSolution(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRevealSolution:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgRevealSolution:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
@@ -245,19 +309,6 @@ export default {
 			}
 		},
 		
-		async MsgRevealSolution({ rootGetters }, { value }) {
-			try {
-				const txClient=await initTxClient(rootGetters)
-				const msg = await txClient.msgRevealSolution(value)
-				return msg
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgRevealSolution:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgRevealSolution:Create Could not create message: ' + e.message)
-				}
-			}
-		},
 		async MsgSubmitScavenge({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -268,6 +319,19 @@ export default {
 					throw new Error('TxClient:MsgSubmitScavenge:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgSubmitScavenge:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgRevealSolution({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgRevealSolution(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgRevealSolution:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgRevealSolution:Create Could not create message: ' + e.message)
 				}
 			}
 		},

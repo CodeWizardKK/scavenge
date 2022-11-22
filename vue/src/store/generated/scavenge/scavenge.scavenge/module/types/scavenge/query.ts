@@ -6,6 +6,7 @@ import {
   PageRequest,
   PageResponse,
 } from "../cosmos/base/query/v1beta1/pagination";
+import { Commit } from "../scavenge/commit";
 
 export const protobufPackage = "scavenge.scavenge";
 
@@ -32,6 +33,23 @@ export interface QueryAllScavengeRequest {
 
 export interface QueryAllScavengeResponse {
   scavenge: Scavenge[];
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryGetCommitRequest {
+  index: string;
+}
+
+export interface QueryGetCommitResponse {
+  commit: Commit | undefined;
+}
+
+export interface QueryAllCommitRequest {
+  pagination: PageRequest | undefined;
+}
+
+export interface QueryAllCommitResponse {
+  commit: Commit[];
   pagination: PageResponse | undefined;
 }
 
@@ -440,6 +458,282 @@ export const QueryAllScavengeResponse = {
   },
 };
 
+const baseQueryGetCommitRequest: object = { index: "" };
+
+export const QueryGetCommitRequest = {
+  encode(
+    message: QueryGetCommitRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.index !== "") {
+      writer.uint32(10).string(message.index);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetCommitRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetCommitRequest } as QueryGetCommitRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.index = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetCommitRequest {
+    const message = { ...baseQueryGetCommitRequest } as QueryGetCommitRequest;
+    if (object.index !== undefined && object.index !== null) {
+      message.index = String(object.index);
+    } else {
+      message.index = "";
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetCommitRequest): unknown {
+    const obj: any = {};
+    message.index !== undefined && (obj.index = message.index);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetCommitRequest>
+  ): QueryGetCommitRequest {
+    const message = { ...baseQueryGetCommitRequest } as QueryGetCommitRequest;
+    if (object.index !== undefined && object.index !== null) {
+      message.index = object.index;
+    } else {
+      message.index = "";
+    }
+    return message;
+  },
+};
+
+const baseQueryGetCommitResponse: object = {};
+
+export const QueryGetCommitResponse = {
+  encode(
+    message: QueryGetCommitResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.commit !== undefined) {
+      Commit.encode(message.commit, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryGetCommitResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryGetCommitResponse } as QueryGetCommitResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.commit = Commit.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetCommitResponse {
+    const message = { ...baseQueryGetCommitResponse } as QueryGetCommitResponse;
+    if (object.commit !== undefined && object.commit !== null) {
+      message.commit = Commit.fromJSON(object.commit);
+    } else {
+      message.commit = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetCommitResponse): unknown {
+    const obj: any = {};
+    message.commit !== undefined &&
+      (obj.commit = message.commit ? Commit.toJSON(message.commit) : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetCommitResponse>
+  ): QueryGetCommitResponse {
+    const message = { ...baseQueryGetCommitResponse } as QueryGetCommitResponse;
+    if (object.commit !== undefined && object.commit !== null) {
+      message.commit = Commit.fromPartial(object.commit);
+    } else {
+      message.commit = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllCommitRequest: object = {};
+
+export const QueryAllCommitRequest = {
+  encode(
+    message: QueryAllCommitRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.pagination !== undefined) {
+      PageRequest.encode(message.pagination, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllCommitRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllCommitRequest } as QueryAllCommitRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.pagination = PageRequest.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllCommitRequest {
+    const message = { ...baseQueryAllCommitRequest } as QueryAllCommitRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllCommitRequest): unknown {
+    const obj: any = {};
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageRequest.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllCommitRequest>
+  ): QueryAllCommitRequest {
+    const message = { ...baseQueryAllCommitRequest } as QueryAllCommitRequest;
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageRequest.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryAllCommitResponse: object = {};
+
+export const QueryAllCommitResponse = {
+  encode(
+    message: QueryAllCommitResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.commit) {
+      Commit.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): QueryAllCommitResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseQueryAllCommitResponse } as QueryAllCommitResponse;
+    message.commit = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.commit.push(Commit.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryAllCommitResponse {
+    const message = { ...baseQueryAllCommitResponse } as QueryAllCommitResponse;
+    message.commit = [];
+    if (object.commit !== undefined && object.commit !== null) {
+      for (const e of object.commit) {
+        message.commit.push(Commit.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryAllCommitResponse): unknown {
+    const obj: any = {};
+    if (message.commit) {
+      obj.commit = message.commit.map((e) =>
+        e ? Commit.toJSON(e) : undefined
+      );
+    } else {
+      obj.commit = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryAllCommitResponse>
+  ): QueryAllCommitResponse {
+    const message = { ...baseQueryAllCommitResponse } as QueryAllCommitResponse;
+    message.commit = [];
+    if (object.commit !== undefined && object.commit !== null) {
+      for (const e of object.commit) {
+        message.commit.push(Commit.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -450,6 +744,10 @@ export interface Query {
   ScavengeAll(
     request: QueryAllScavengeRequest
   ): Promise<QueryAllScavengeResponse>;
+  /** Queries a Commit by index. */
+  Commit(request: QueryGetCommitRequest): Promise<QueryGetCommitResponse>;
+  /** Queries a list of Commit items. */
+  CommitAll(request: QueryAllCommitRequest): Promise<QueryAllCommitResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -488,6 +786,26 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryAllScavengeResponse.decode(new Reader(data))
+    );
+  }
+
+  Commit(request: QueryGetCommitRequest): Promise<QueryGetCommitResponse> {
+    const data = QueryGetCommitRequest.encode(request).finish();
+    const promise = this.rpc.request("scavenge.scavenge.Query", "Commit", data);
+    return promise.then((data) =>
+      QueryGetCommitResponse.decode(new Reader(data))
+    );
+  }
+
+  CommitAll(request: QueryAllCommitRequest): Promise<QueryAllCommitResponse> {
+    const data = QueryAllCommitRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "scavenge.scavenge.Query",
+      "CommitAll",
+      data
+    );
+    return promise.then((data) =>
+      QueryAllCommitResponse.decode(new Reader(data))
     );
   }
 }
