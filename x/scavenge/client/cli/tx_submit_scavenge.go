@@ -1,35 +1,42 @@
 package cli
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"strconv"
+
+	"scavenge/x/scavenge/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
-	"scavenge/x/scavenge/types"
 )
 
 var _ = strconv.Itoa(0)
 
 func CmdSubmitScavenge() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "submit-scavenge [solution-hash] [description] [reward]",
+		Use:   "submit-scavenge [solution] [description] [reward]",
 		Short: "Broadcast message submit-scavenge",
 		Args:  cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argSolutionHash := args[0]
-			argDescription := args[1]
-			argReward := args[2]
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
+			//正解のハッシュ化
+			solution := args[0]
+			solutionHash := sha256.Sum256([]byte(solution))
+			solutionHashString := hex.EncodeToString(solutionHash[:])
+			//description,rewardはそのままセット
+			argDescription := args[1]
+			argReward := args[2]
+
 			msg := types.NewMsgSubmitScavenge(
 				clientCtx.GetFromAddress().String(),
-				argSolutionHash,
+				solutionHashString,
 				argDescription,
 				argReward,
 			)
